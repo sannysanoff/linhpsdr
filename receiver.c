@@ -1380,6 +1380,15 @@ static gboolean leave (GtkWidget *ebox, GdkEventCrossing *event, void *user_data
    return FALSE;
 }
 
+static gboolean keypress(GtkWidget *widget, GdkEventKey *event, gpointer data) {
+    RECEIVER *rx = (RECEIVER *)data;
+    if (event->keyval == 65379){
+        set_mox(radio,!radio->mox);
+        return TRUE;
+    }
+    return FALSE;
+}
+
 static void create_visual(RECEIVER *rx) {
 
   rx->dialog=NULL;
@@ -1445,7 +1454,11 @@ static void create_visual(RECEIVER *rx) {
   gtk_widget_set_events(rx->window,gtk_widget_get_events(rx->window)
                      | GDK_FOCUS_CHANGE_MASK
                      | GDK_BUTTON_PRESS_MASK
+                     | GDK_KEY_PRESS_MASK
                      | GDK_BUTTON_RELEASE_MASK);
+
+    g_signal_connect (rx->window, "key_press_event",
+                      G_CALLBACK (keypress), rx);
 }
 
 void receiver_init_analyzer(RECEIVER *rx) {
